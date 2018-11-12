@@ -1,0 +1,13 @@
+ output="Hello World!"
+    )
+
+@app.route('/echo/<string:input_str>')
+def echo(input_str):
+    return jsonify(
+        output=output,
+        error=err_msg
+    )
+
+@app.route('/slack-alert/<string:msg>')
+def post_to_slack(msg):
+    data = { 'text': msg }
