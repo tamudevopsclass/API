@@ -1,0 +1,12 @@
+#is_prime
+def is_prime(n):
+    #checks to see if it is divisable by 2, if it is return false
+    if n % 2 == 0 and n > 2: 
+        return False
+    #checks to see if it is divisable by every odd number from 3 to square root +1
+    #if it is return false
+    for i in range(3, int(math.sqrt(n)) + 1, 2):
+        if n % i == 0:
+            return False
+#if neither of the if statements return false, then it returns true
+return True
