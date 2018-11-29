@@ -1,0 +1,16 @@
+version: '3'
+services:
+  web:
+    image: macalahthomas/tcmg476:four
+    ports:
+      - "5000:5000"
+    networks:
+      - webnet
+    links:
+      - redis
+  redis:
+    image: "redis:alpine"
+    networks:
+      - webnet
+networks:
+  webnet:
