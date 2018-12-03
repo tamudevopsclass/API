@@ -1,0 +1,69 @@
+#!/usr/bin/python3
+
+
+import click
+import requests
+
+
+@click.command()
+@click.argument('endpoint', type=click.Choice(['md5', 'fibonacci', 'factorial', 'kv']))
+@click.argument('value')
+@click.option('--host', default='localhost')
+@click.option('--port', default='5000')
+def cli(endpoint, value, host, port):
+
+    # Build the API location
+    API_LOC = 'http://' + host + ':' + port + '/' 
+
+    # detect the 'special' endpoints
+    if endpoint == 'kv':
+        resp = requests.get(API_LOC + 'kv-retrieve/' + value)
+        json_output = resp.json().get('output')
+
+        if json_output == False:
+            choice = None
+            while choice not in ['y', 'n']:
+                choice = input("\nKey does not exist. Would you like to create it? (y/n) ")
+                if choice == 'y':
+                    print("\n Creating key!\n")
+                    user_value = input(f"\nEnter the value for key '{value}': ")
+                    r = requests.post(API_LOC + 'kv-record/' + value, json={'key': value, 'value': user_value})
+                    if r.status_code == 200:
+                        print("\nSuccessfully created!\n")
+                elif choice == 'n':
+                    pass
+                else:
+                    print("\nInvalid option. Please try again.")
+        else:
+            print(f"Value: {json_output}")
+            choice = None
+            while choice not in ['y', 'n']:
+                choice = input("\nWould you like to update the value? (y/n) ")
+                if choice == 'y':
+                    print("\nUpdating the value!\n")
+                    user_value = input(f"\nEnter the new value for key '{value}': ")
+                    r = requests.put(API_LOC + 'kv-record/' + value, json={'key': value, 'value': user_value})
+                    if r.status_code == 200:
+                        print("\nSuccessfully updated!\n")
+                elif choice == 'n':
+                    pass
+                else:
+                    print("Invalid option. Please try again.")
+
+    else:
+        # build the URL
+        URL = API_LOC + endpoint + '/' + value
+        print(f"\nUsing URL: {URL}")
+
+        # Make the REST call
+        response = requests.get(URL)
+
+        # Get the JSON data
+        return_value = response.json().get('output', 'error')
+
+        # Return the answer to the user
+        print(f"\nAnswer: {return_value}\n")
+    
+
+if __name__ == "__main__":
+    cli()
