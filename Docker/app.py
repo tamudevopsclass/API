@@ -40,20 +40,20 @@ def fact(inp):
 	else:
 		out = math.factorial(inp);
 		return json.dumps({"input":inp, "output":out})
-
-@app.route('/fibonacci/<string:inp>')
+	
+@app.route('/fibonacci/<int:inp>')
 def fibonacci(inp):
 	try:
-		final = int(inp)
-		if final <= 0:
+		if inp <= 0:
 			raise ValueError()
 	except ValueError:
-		return json.dumps({"input":inp, "output":"Value must be an integer, greater than 0"})
+		return json.dumps({"input":inp, "output":"Value must be a non-negative integer"}) 
 	else:
-		out = [1, 1]
+		final = inp
+		out = [0, 1, 1]
 		i = 0
 		while (out[-1]+out[-2]) <= final:
-			i = out[-1] + out[-2]
+			i = out[-1] + out[-2] 
 			out.append(i)
 		return json.dumps({"input":inp, "output":out})
 
